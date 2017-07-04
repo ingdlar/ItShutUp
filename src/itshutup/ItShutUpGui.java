@@ -43,13 +43,9 @@ public class ItShutUpGui extends javax.swing.JFrame {
         this.setLocation(x, y);
     }
 
-    public void setServerAddr(String s) {
-        servAddr = s;
-    }
+    public void setServerAddr(String s) { servAddr = s;}
 
-    public void setServerPort(int i) {
-        servPort = i;
-    }
+    public void setServerPort(int i) { servPort = i;}
 
     /**
      * This method is called from within the constructor to initialize the form.

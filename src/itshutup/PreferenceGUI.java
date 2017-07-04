@@ -26,7 +26,7 @@ public class PreferenceGUI extends javax.swing.JFrame {
         initComponents();
         pInitComponent(); 
     }
-      public PreferenceGUI(ItShutUpGui itShutUpGui) {
+    public PreferenceGUI(ItShutUpGui itShutUpGui) {
         this.itShutUpGui = itShutUpGui;  
         initComponents();
         pInitComponent(); 
