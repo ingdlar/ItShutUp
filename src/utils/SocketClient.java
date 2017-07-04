@@ -5,11 +5,15 @@
  */
 package Utils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,60 +21,68 @@ import java.net.UnknownHostException;
  */
 public class SocketClient {
 
-    String dstAddress;
-    int dstPort;
-    String response = "";
+    String servAddr;
+    int servPort;
+    Socket socket;
+    DataOutputStream sendData;
+    DataInputStream getData;
+    String msFromServer;
 
-    SocketClient(String addr, int port) {
-        dstAddress = addr;
-        dstPort = port;
-        //this.textResponse = textResponse;
+    ObjectOutputStream sendData2;
+    ObjectInputStream getData2;
+
+    /**
+     *
+     */
+    public SocketClient() {
+        //this.servAddr = "192.168.81.70";
+        servAddr = "192.168.38.8";
+        servPort = 11222;
     }
-    
-    protected String doInBackground(Object... arg0) {
 
-        Socket socket = null;
+    public SocketClient(String serAddr, int servPort) {
+        this.servAddr = serAddr;
+        this.servPort = servPort;
+    }
 
-        try {
-            socket = new Socket(dstAddress, dstPort);
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
-            byte[] buffer = new byte[1024];
-
-            int bytesRead;
-            InputStream inputStream = socket.getInputStream();
-
-			/*
-             * notice: inputStream.read() will block if no data return
-			 */
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-                response += byteArrayOutputStream.toString("UTF-8");
-            }
-
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            response = "UnknownHostException: " + e.toString();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            response = "IOException: " + e.toString();
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+    public void sendDataObj(Object msToServer) throws ConnectException, IOException {
+        //Creating socket for the conection
+        socket = new Socket(servAddr, servPort);
+        if (this.socket.isConnected()) {
+            sendData2 = new ObjectOutputStream(socket.getOutputStream()); //Creating the object to send the data
+            sendData2.writeObject(msToServer);
+        } else {
+            System.out.println("Socket not conected");
         }
-        return response;
+
     }
-   
-    protected void onPostExecute(String result) {
-        //textResponse.setText(response);
-        //super.onPostExecute(result);
+
+    public void sendData(String msToServer) {
+        try {
+            //Creating socket for the conection
+            socket = new Socket(servAddr, servPort);
+            sendData = new DataOutputStream(socket.getOutputStream()); //Creating the object to send the data
+            sendData.writeUTF(msToServer);
+        } catch (IOException ex) {
+            Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public String getResponse() {
+        try {
+            getData = new DataInputStream(socket.getInputStream());
+            msFromServer = getData.readUTF();
+        } catch (IOException ex) {
+            Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return msFromServer;
     }
 }

@@ -5,17 +5,50 @@
  */
 package itshutup;
 
+import Utils.SocketClient;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author E1002498
  */
 public class ItShutUpGui extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ItShutUpGui
-     */
+    SocketClient SockC;
+    Map<String, String> data = new HashMap();
+    String servAddr;
+    int servPort;
+    String message = "Socket Error, please configure the ip and port. Or maybe the server is down.";
+
     public ItShutUpGui() {
         initComponents();
+        initComponent();
+    }
+
+    public void initComponent() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+        Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+        int x = (int) rect.getMaxX() - this.getWidth();
+        int y = (int) rect.getMaxY() - this.getHeight() - 40;
+        this.setLocation(x, y);
+    }
+
+    public void setServerAddr(String s) {
+        servAddr = s;
+    }
+
+    public void setServerPort(int i) {
+        servPort = i;
     }
 
     /**
@@ -28,160 +61,224 @@ public class ItShutUpGui extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlMain = new javax.swing.JPanel();
-        pnlUpAppName = new javax.swing.JPanel();
-        lblAppName = new javax.swing.JLabel();
         lblMessageTxt = new javax.swing.JLabel();
-        volumenLevel = new javax.swing.JSlider();
         lblQuestion = new javax.swing.JLabel();
+        lblVolShhSlider = new javax.swing.JLabel();
+        lblLeaveMessage = new javax.swing.JLabel();
+        lblAppVersion = new javax.swing.JLabel();
         btnPersonalCall = new javax.swing.JButton();
         btnMeeting = new javax.swing.JButton();
-        lblLeaveMessage = new javax.swing.JLabel();
+        btnSend = new javax.swing.JButton();
+        volShhSlider = new javax.swing.JSlider();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMessageArea = new javax.swing.JTextArea();
-        btnSend = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuConf = new javax.swing.JMenu();
+        jmItemPreferences = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jmItemExit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(153, 153, 153));
+        setLocation(new java.awt.Point(600, 300));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnlMain.setBackground(new java.awt.Color(255, 255, 255));
-        pnlMain.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnlMain.setForeground(new java.awt.Color(153, 153, 153));
-
-        pnlUpAppName.setBackground(new java.awt.Color(88, 149, 180));
-
-        lblAppName.setBackground(new java.awt.Color(255, 255, 255));
-        lblAppName.setFont(new java.awt.Font("Arial Unicode MS", 1, 14)); // NOI18N
-        lblAppName.setForeground(new java.awt.Color(255, 255, 255));
-        lblAppName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblAppName.setText("It Shut Up");
-
-        javax.swing.GroupLayout pnlUpAppNameLayout = new javax.swing.GroupLayout(pnlUpAppName);
-        pnlUpAppName.setLayout(pnlUpAppNameLayout);
-        pnlUpAppNameLayout.setHorizontalGroup(
-            pnlUpAppNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblAppName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlUpAppNameLayout.setVerticalGroup(
-            pnlUpAppNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlUpAppNameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblAppName)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        pnlMain.setLayout(null);
 
         lblMessageTxt.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblMessageTxt.setText("Level Of Noise In The Area");
+        lblMessageTxt.setText("Level Of Noise In The Dep");
+        lblMessageTxt.setPreferredSize(new java.awt.Dimension(240, 16));
+        pnlMain.add(lblMessageTxt);
+        lblMessageTxt.setBounds(0, 0, 240, 16);
 
-        volumenLevel.setValue(0);
+        lblQuestion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblQuestion.setText("What Are You Doing ?");
+        pnlMain.add(lblQuestion);
+        lblQuestion.setBounds(0, 20, 240, 16);
 
-        lblQuestion.setText("What are doing ?");
+        lblVolShhSlider.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblVolShhSlider.setText("Label Of Shhh");
+        pnlMain.add(lblVolShhSlider);
+        lblVolShhSlider.setBounds(0, 120, 240, 16);
 
+        lblLeaveMessage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblLeaveMessage.setText("Leave A Message");
+        pnlMain.add(lblLeaveMessage);
+        lblLeaveMessage.setBounds(0, 160, 240, 16);
+
+        lblAppVersion.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        lblAppVersion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAppVersion.setText("ItShutUp v1.0");
+        pnlMain.add(lblAppVersion);
+        lblAppVersion.setBounds(0, 340, 240, 30);
+
+        btnPersonalCall.setBackground(new java.awt.Color(255, 255, 255));
         btnPersonalCall.setText("I'm in a Personal Call");
-        btnPersonalCall.setActionCommand("I'm in a Personal Call");
         btnPersonalCall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPersonalCallActionPerformed(evt);
             }
         });
+        pnlMain.add(btnPersonalCall);
+        btnPersonalCall.setBounds(0, 40, 240, 40);
 
-        btnMeeting.setText("We have a Meeting");
+        btnMeeting.setBackground(new java.awt.Color(255, 255, 255));
+        btnMeeting.setText("We are in a Meeting");
         btnMeeting.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnMeetingActionPerformed(evt);
             }
         });
+        pnlMain.add(btnMeeting);
+        btnMeeting.setBounds(0, 80, 240, 40);
 
-        lblLeaveMessage.setText("Leave a message");
-
-        txtMessageArea.setColumns(20);
-        txtMessageArea.setRows(5);
-        jScrollPane1.setViewportView(txtMessageArea);
-
+        btnSend.setBackground(new java.awt.Color(255, 255, 255));
         btnSend.setText("Send");
+        btnSend.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSendActionPerformed(evt);
             }
         });
+        pnlMain.add(btnSend);
+        btnSend.setBounds(150, 290, 90, 40);
 
-        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
-        pnlMain.setLayout(pnlMainLayout);
-        pnlMainLayout.setHorizontalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlMainLayout.createSequentialGroup()
-                .addComponent(lblMessageTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(pnlMainLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(volumenLevel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addComponent(lblQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnMeeting, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnPersonalCall, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addComponent(lblLeaveMessage)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnSend)))
-                .addContainerGap())
-            .addComponent(pnlUpAppName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlMainLayout.setVerticalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlMainLayout.createSequentialGroup()
-                .addComponent(pnlUpAppName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblMessageTxt)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(volumenLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblQuestion)
-                    .addComponent(btnPersonalCall))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMeeting)
-                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblLeaveMessage))
-                    .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSend)
-                .addGap(0, 11, Short.MAX_VALUE))
-        );
+        volShhSlider.setBackground(new java.awt.Color(255, 255, 255));
+        volShhSlider.setMaximum(20);
+        volShhSlider.setValue(10);
+        volShhSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                volShhSliderMouseReleased(evt);
+            }
+        });
+        pnlMain.add(volShhSlider);
+        volShhSlider.setBounds(0, 140, 240, 20);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        txtMessageArea.setBackground(new java.awt.Color(255, 255, 255));
+        txtMessageArea.setColumns(20);
+        txtMessageArea.setLineWrap(true);
+        txtMessageArea.setRows(5);
+        txtMessageArea.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(txtMessageArea);
+
+        pnlMain.add(jScrollPane1);
+        jScrollPane1.setBounds(0, 180, 240, 110);
+
+        getContentPane().add(pnlMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 6, 240, 380));
+
+        jMenuBar1.setBorder(null);
+
+        jMenuConf.setText("Menu");
+        jMenuConf.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jMenuConf.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jMenuConf.setMargin(new java.awt.Insets(2, 2, 1, 2));
+
+        jmItemPreferences.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        jmItemPreferences.setText("Preferences");
+        jmItemPreferences.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmItemPreferencesActionPerformed(evt);
+            }
+        });
+        jMenuConf.add(jmItemPreferences);
+        jMenuConf.add(jSeparator1);
+
+        jmItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jmItemExit.setText("Exit");
+        jmItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmItemExitActionPerformed(evt);
+            }
+        });
+        jMenuConf.add(jmItemExit);
+
+        jMenuBar1.add(jMenuConf);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnMeetingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMeetingActionPerformed
+        // TODO add your handling code here:   
+        try{
+            SockC = new SocketClient(servAddr,servPort); 
+            System.out.println("Sending message to the server:");
+            data.put("MEETING", "MEETING");
+            SockC.sendDataObj(data);
+            SockC.closeConnection();
+            data.clear();
+        } catch (ConnectException ex) {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            Logger.getLogger(ItShutUpGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnMeetingActionPerformed
+
+    private void volShhSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_volShhSliderMouseReleased
+        // TODO add your handling code here:
+        try{
+            SockC = new SocketClient(servAddr, servPort);
+            //SockC = new SocketClient("192.168.38.8",11222);
+            int volLevel = volShhSlider.getValue();
+            System.out.println("Sending message to the server:");
+            data.put("SHSLIDER", String.valueOf(volLevel));
+            SockC.sendDataObj(data);
+            SockC.closeConnection();
+            data.clear();
+        } catch (ConnectException ex) {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            Logger.getLogger(ItShutUpGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_volShhSliderMouseReleased
+
     private void btnPersonalCallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPersonalCallActionPerformed
         // TODO add your handling code here:
+        try {
+            SockC = new SocketClient(servAddr, servPort);
+            //SockC = new SocketClient("192.168.38.8",11222);
+            System.out.println("Sending message to the server:");
+            data.put("PERSONALCALL", "PERSONALCALL");
+            SockC.sendDataObj(data);
+            SockC.closeConnection();
+            data.clear();
+        } catch (ConnectException ex) {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            Logger.getLogger(ItShutUpGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnPersonalCallActionPerformed
-
-    private void btnMeetingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMeetingActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnMeetingActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         // TODO add your handling code here:
+        try{
+            SockC = new SocketClient(servAddr, servPort);
+            //SockC = new SocketClient("192.168.38.8",11222);
+            System.out.println("Sending message to the server:");
+            data.put("MESSAGE", txtMessageArea.getText());
+            SockC.sendDataObj(data);
+            SockC.closeConnection();
+            data.clear();
+            txtMessageArea.setText("");
+        } catch (ConnectException ex) {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            Logger.getLogger(ItShutUpGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnSendActionPerformed
+
+    private void jmItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmItemExitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jmItemExitActionPerformed
+
+    private void jmItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmItemPreferencesActionPerformed
+        // TODO add your handling code here:
+        new PreferenceGUI(this).setVisible(true);
+    }//GEN-LAST:event_jmItemPreferencesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,9 +306,11 @@ public class ItShutUpGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ItShutUpGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        //System.getProperties().list(System.out);
+        //System.out.println(System.getProperty("user.name"));
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new ItShutUpGui().setVisible(true);
             }
@@ -222,14 +321,19 @@ public class ItShutUpGui extends javax.swing.JFrame {
     private javax.swing.JButton btnMeeting;
     private javax.swing.JButton btnPersonalCall;
     private javax.swing.JButton btnSend;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuConf;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblAppName;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JMenuItem jmItemExit;
+    private javax.swing.JMenuItem jmItemPreferences;
+    private javax.swing.JLabel lblAppVersion;
     private javax.swing.JLabel lblLeaveMessage;
     private javax.swing.JLabel lblMessageTxt;
     private javax.swing.JLabel lblQuestion;
+    private javax.swing.JLabel lblVolShhSlider;
     private javax.swing.JPanel pnlMain;
-    private javax.swing.JPanel pnlUpAppName;
     private javax.swing.JTextArea txtMessageArea;
-    private javax.swing.JSlider volumenLevel;
+    private javax.swing.JSlider volShhSlider;
     // End of variables declaration//GEN-END:variables
 }
